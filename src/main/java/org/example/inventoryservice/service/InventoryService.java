@@ -39,6 +39,36 @@ public class InventoryService {
                 );
     }
 
+    @Transactional
+    @CacheEvict(value = "medicines", key = "#medicine.id")
+    public Medicine updateMedicine(Medicine medicine) {
+
+        if (medicine.getPrice() == null || medicine.getPrice() < 0) {
+            throw new ResponseStatusException(
+                    HttpStatus.BAD_REQUEST,
+                    "Giá thuốc phải lớn hơn hoặc bằng 0"
+            );
+        }
+
+        Medicine existingMedicine = medicineRepository.findById(medicine.getId())
+                .orElseThrow(() ->
+                        new ResponseStatusException(
+                                HttpStatus.NOT_FOUND,
+                                "Không tìm thấy thuốc có ID: " + medicine.getId()
+                        )
+                );
+
+        existingMedicine.setPrice(medicine.getPrice());
+
+        Medicine updatedMedicine = medicineRepository.save(existingMedicine);
+
+        System.out.println(
+                ">>> ĐÃ CẬP NHẬT GIÁ THUỐC ID: " + medicine.getId()
+        );
+
+        return updatedMedicine;
+    }
+
     // ====================================
     // KAFKA - TRỪ TỒN KHO
     // ====================================

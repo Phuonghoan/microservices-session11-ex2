@@ -23,6 +23,6 @@ public class RedisCacheConfig {
                                 .fromSerializer(RedisSerializer.json())
                 )
                 .disableCachingNullValues()
-                .entryTtl(Duration.ofMinutes(10));
+                .entryTtl(Duration.ofMinutes(60));
     }
 }
